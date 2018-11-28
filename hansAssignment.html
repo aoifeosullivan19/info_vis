@@ -234,13 +234,52 @@ function generateVis(){
          .style("opacity", 0);
        
        ;})
+    
+     points
+                    
+                    .style("opacity", 0.1);
+    ;
    //  	https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73
             	
     
 	// Set the year label
 	d3.select("#year_header").text("Year: " + display_year)
-}
+} 
+            
+function generateScatter() {
+       	// Filter the data to only include the current year
+	
 
+//	// Update the axis domains based on the loaded data
+	xScale.domain([0, d3.max(dataset, function(d) { return +d.GDP;}) ])
+	yScale.domain([0, d3.max(dataset, function(d) { return +d.Global_Competitiveness_Index; })]);
+
+
+	// Call the axes objects
+	svg.select("#x-axis").call(xAxis);
+	svg.select("#y-axis").call(yAxis);
+    
+    	/******** PERFORM DATA JOIN ************/
+	  	// Join new data with old elements, if any.
+		var points = svg.selectAll(".dot")
+							.data(dataset);
+     points.enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 5)
+      .attr("cx", function(d){
+									return xScale(d.GDP);
+								})
+      .attr("cy", function(d){
+									return yScale(d.Global_Competitiveness_Index);
+								})
+      .style("fill", function (d) {
+                                    return circleColor(d.Country)
+                       });
+
+        
+    
+}
+            
 // Load the file data.csv and generate a visualisation based on it
 	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
 		
@@ -254,11 +293,34 @@ function generateVis(){
 	// Assign  the data object loaded to the global dataset variable
 			dataset = data;
             generateVis();
+            
 
 	// A global variable for the interval listeneer so that it can be stopped elsewhere
 	var playInterval;	
 	    
+  var select = d3.select("body")
+      .append("div")
+      .append("select")
 
+    select
+      .on("change", function(d) {
+        var value = d3.select(this).property("value");
+        
+        alert(value);
+        generateScatter;
+      });
+
+
+    select.selectAll("option")
+      .data(data)
+      .enter()
+        .append("option")
+        .attr("value", function (d) { return d.value; })
+        .text(function (d) { 
+                           return(d.Country)   });
+            
+       
+//https://stackoverflow.com/questions/24588883/populate-dropdown-list-with-csv-file-d3
 	// Add an event listener to the play all button do that when it is clicked the visualisaiton iterates through the different years
 		
             d3.select("stop_button")

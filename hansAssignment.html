@@ -42,8 +42,26 @@
 		<h3 id = "year_header">Year: </h3>
 	
 	<div class = "demo">
-	
+        <div class = "button-bar">
+			<div class = "play_button">Play All</div>
+		</div>
+		<hr style="clear:both;">
+		<div class = "button-bar">
+			<div class = "button selected">2007</div> <div class = "button">2008</div> <div class = "button">2009</div>
+		</div>
+		<hr style="clear:both;">
+		<div>
+            
+            
+	<div class="slidecontainer">
+<button type="button" id="play">play</button>
+	<button type="button" id="pause">pause</button>
+  <input type="range" min="2007" max="2017" value="1" class="slider" id="myRange">
+          <p>Value: <span id="demo"></span></p>
+</div>
+            
 		<script type="text/javascript" id = "demo_code">
+
 
 // Define margins
 var margin = {top: 20, right: 20, bottom: 55, left: 90};
@@ -142,7 +160,7 @@ function generateVis(){
  
         points
         .transition()
-    .duration(500)
+    .duration(300)
 //      .ease(d3.easeBack)
             .attr("cx",function(d){
 									return xScale(d.GDP);
@@ -157,14 +175,14 @@ function generateVis(){
 		   	.style("fill", function (d) {
                                     return circleColor(d.Country)
                        })
-      .on("mouseover", function(d) {		
-            div.transition()		
-                .duration(100)		
-                .style("opacity", .99);		
-            div	.html(d.Country)	
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY + 5) + "px");	
-            })	
+//      .on("mouseover", function(d) {		
+//            div.transition()		
+//                .duration(100)		
+//                .style("opacity", .99);		
+//            div	.html(d.Country)	
+//                .style("left", (d3.event.pageX) + "px")		
+//                .style("top", (d3.event.pageY + 5) + "px");	
+//            })	
     ;
 
 
@@ -217,7 +235,7 @@ function generateVis(){
 }
 
 // Load the file data.csv and generate a visualisation based on it
-	d3.csv("./data/GCI_test.csv", function(error, data){
+	d3.csv("./data/test.csv", function(error, data){
 		
 		// handle any data loading errors
 		if(error){
@@ -228,12 +246,97 @@ function generateVis(){
       
 	// Assign  the data object loaded to the global dataset variable
 			dataset = data;
-        
+            generateVis();
 			// convert each variable to numeric type and parse the date
-
-		
-              generateVis();
             
+                   // Add an on-click event handler to each button that updates the display year
+d3.selectAll(".button")
+	.on("click", function(d) {
+
+		// Deselect all of the other buttons
+		d3.select(".selected")
+			.classed("selected", false);
+
+		// Select the clicked button
+		d3.select(this)
+			.classed("selected", true);
+
+		// Update the display year
+        display_year = d3.select(this).text();
+
+		// Update the visualsiation
+		generateVis();
+		
+		// If the user selectes a specifc year then stop loopping if it is in action
+		clearInterval(playInterval);
+	});
+
+
+	// A global variable for the interval listeneer so that it can be stopped elsewhere
+	var playInterval;	
+	    
+
+	// Add an event listener to the play all button do that when it is clicked the visualisaiton iterates through the different years
+	
+		
+            d3.select("stop_button")
+		.on("click", function() {
+                		clearInterval(playInterval);
+            })
+
+            
+                        
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+    output.innerHTML = this.value;
+    console.log(output.innerHTML);
+    // Update the display year
+        display_year = output.innerHTML;
+		generateVis();
+    
+    
+}
+d3.select(".play")
+		.on("click", function() {
+
+			// Set up the interval callback
+			playInterval = setInterval(function() {
+			 
+			// Increment the display year
+			display_year++;
+						
+			// Make the display_year loop around from max to min
+			if(display_year > 2017){
+				display_year = 2007;
+			}
+			
+			// Update the visualsiation
+			generateVis();
+                slider++;
+		output.innerHTML++;
+
+			}, 1000);
+		});	
+            
+            d3.select("#play").on("click", function() {
+                clearInterval(playInterval);
+                playInterval=setInterval(function() {
+                    	var b= d3.select(slider);
+                    console.log(b);
+                        var t = (+b.property("value") + 1) % (+b.property("max") + 1);
+                        if (t == 0) { t = +b.property("min"); }
+                        b.property("value", t);
+                        t=b.property("value");
+    }, 1000);
+                });
+
+            d3.select("#pause").on("click", function() {
+	clearInterval (playInterval);
+});
 
 			// Set the domains of the x and y scales using the data
 			var max_close = d3.max(dataset, function(d) { return d.Global_Competitiveness_Index;} );
@@ -278,18 +381,20 @@ function generateVis(){
 				      .style("text-anchor", "end")
 				      .text("Global Competitive Index");
             
-            generateVis();
+     //       generateVis();
 
 				
         	// Generate the visualisation
-			setInterval(function() {
-			display_year = display_year + 1;
-			if(display_year > 2017){
-				display_year = 2007;
-			}
-		  	generateVis();
-		}, 4000);	
+//			setInterval(function() {
+//			display_year = display_year + 1;
+//			if(display_year > 2017){
+//				display_year = 2007;
+//			}
+//		  	generateVis();
+//		}, 2000);	
 	}
+
+ 
 
 	
 		

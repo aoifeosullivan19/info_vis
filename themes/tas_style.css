@@ -57,9 +57,10 @@ html {
 
 .slider {
     -webkit-appearance: none;
-    width: 100%;
+    width: 80%;
+    align-items:left;
     height: 15px;
-    border-radius: 5px;   
+    border-radius: 5px;  
     background: #d3d3d3;
     outline: none;
     opacity: 0.7;

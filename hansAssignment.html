@@ -24,44 +24,32 @@
     position: absolute;			
     text-align: center;			
     width: 60px;					
-    height: 20px;					
-    padding: 1px;				
+    height: 28px;					
+    padding: 2px;				
     font: 12px sans-serif;		
-    border: 1px;		
-    border-radius: 1px;	
+    border: 0px;		
+    border-radius: 8px;			
     pointer-events: none;			
 }
         
+          
         /* http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 */
 	</style>
 </head>
 <body>
 
 	<h1>Channelling Hans</h1>
-    	
-		<h3 id = "year_header">Year: </h3>
-	
-	<div class = "demo">
-        <div class = "button-bar">
-			<div class = "play_button">Play All</div>
-		</div>
-		<hr style="clear:both;">
-		<div class = "button-bar">
-			<div class = "button selected">2007</div> <div class = "button">2008</div> <div class = "button">2009</div>
-		</div>
-		<hr style="clear:both;">
-		<div>
+    
             
             
 	<div class="slidecontainer">
-<button type="button" id="play">play</button>
-	<button type="button" id="pause">pause</button>
-  <input type="range" min="2007" max="2017" value="1" class="slider" id="myRange">
-          <p>Value: <span id="demo"></span></p>
+<button type="button" id="play">Play</button>
+	<button type="button" id="pause">Pause</button>
+  <input type="range" min="2007" max="2017" value="1" class="slider" id="sliderRange">
+          <p>Year: <span id="year"></span></p>
 </div>
             
 		<script type="text/javascript" id = "demo_code">
-
 
 // Define margins
 var margin = {top: 20, right: 20, bottom: 55, left: 90};
@@ -150,6 +138,7 @@ function generateVis(){
 		var points = svg.selectAll("circle")
 							.data(filtered_dataset);
 
+
     
    
     
@@ -176,10 +165,11 @@ function generateVis(){
                                     return circleColor(d.Country)
                        })
 //      .on("mouseover", function(d) {		
-//            div.transition()		
+//            d3.select(this)
+//              //  .transition()
 //                .duration(100)		
 //                .style("opacity", .99);		
-//            div	.html(d.Country)	
+//            div.html(d.Country)	
 //                .style("left", (d3.event.pageX) + "px")		
 //                .style("top", (d3.event.pageY + 5) + "px");	
 //            })	
@@ -229,13 +219,30 @@ function generateVis(){
     
             .remove();
     	
+    points.    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html(d.Country)	
+      
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+       
+       ;})
+   //  	https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73
+            	
     
 	// Set the year label
 	d3.select("#year_header").text("Year: " + display_year)
 }
 
 // Load the file data.csv and generate a visualisation based on it
-	d3.csv("./data/test.csv", function(error, data){
+	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
 		
 		// handle any data loading errors
 		if(error){
@@ -247,37 +254,12 @@ function generateVis(){
 	// Assign  the data object loaded to the global dataset variable
 			dataset = data;
             generateVis();
-			// convert each variable to numeric type and parse the date
-            
-                   // Add an on-click event handler to each button that updates the display year
-d3.selectAll(".button")
-	.on("click", function(d) {
-
-		// Deselect all of the other buttons
-		d3.select(".selected")
-			.classed("selected", false);
-
-		// Select the clicked button
-		d3.select(this)
-			.classed("selected", true);
-
-		// Update the display year
-        display_year = d3.select(this).text();
-
-		// Update the visualsiation
-		generateVis();
-		
-		// If the user selectes a specifc year then stop loopping if it is in action
-		clearInterval(playInterval);
-	});
-
 
 	// A global variable for the interval listeneer so that it can be stopped elsewhere
 	var playInterval;	
 	    
 
 	// Add an event listener to the play all button do that when it is clicked the visualisaiton iterates through the different years
-	
 		
             d3.select("stop_button")
 		.on("click", function() {
@@ -286,19 +268,15 @@ d3.selectAll(".button")
 
             
                         
-var slider = document.getElementById("myRange");
-var output = document.getElementById("demo");
+var slider = document.getElementById("sliderRange");
+var output = document.getElementById("year");
 output.innerHTML = slider.value; // Display the default slider value
 
 // Update the current slider value (each time you drag the slider handle)
 slider.oninput = function() {
     output.innerHTML = this.value;
-    console.log(output.innerHTML);
-    // Update the display year
         display_year = output.innerHTML;
 		generateVis();
-    
-    
 }
 d3.select(".play")
 		.on("click", function() {
@@ -316,8 +294,6 @@ d3.select(".play")
 			
 			// Update the visualsiation
 			generateVis();
-                slider++;
-		output.innerHTML++;
 
 			}, 1000);
 		});	
@@ -325,19 +301,18 @@ d3.select(".play")
             d3.select("#play").on("click", function() {
                 clearInterval(playInterval);
                 playInterval=setInterval(function() {
-                    	var b= d3.select(slider);
-       
-                        var t = (+b.property("value") + 1) % (+b.property("max") + 1);
-                    console.log(t);
-                        if (t == 0) { t = +b.property("min"); }
-                        b.property("value", t);
-                    display_year=t;
+                    	var selection= d3.select(slider);
+                        var yearUpdate = (+selection.property("value") + 1) % (+selection.property("max") + 1);
+                        if (yearUpdate == 0) { yearUpdate = +selection.property("min"); }
+                        selection.property("value", yearUpdate);
+                    display_year=yearUpdate;
                     
                     generateVis();
-                     output.innerHTML = t;
+                     output.innerHTML = yearUpdate;
                       
-    }, 1000);
+    }, 600);
                 });
+            //https://jsfiddle.net/bfbun6cc/60/
 
             d3.select("#pause").on("click", function() {
 	clearInterval (playInterval);

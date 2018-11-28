@@ -326,11 +326,16 @@ d3.select(".play")
                 clearInterval(playInterval);
                 playInterval=setInterval(function() {
                     	var b= d3.select(slider);
-                    console.log(b);
+       
                         var t = (+b.property("value") + 1) % (+b.property("max") + 1);
+                    console.log(t);
                         if (t == 0) { t = +b.property("min"); }
                         b.property("value", t);
-                        t=b.property("value");
+                    display_year=t;
+                    
+                    generateVis();
+                     output.innerHTML = t;
+                      
     }, 1000);
                 });
 

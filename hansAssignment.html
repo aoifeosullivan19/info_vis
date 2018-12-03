@@ -19,7 +19,7 @@
 		    font-family: sans-serif;
 		    font-size: 11px;
 		}	
-        
+  
         div.tooltip {	
     position: absolute;			
     text-align: center;			
@@ -69,7 +69,7 @@ var dataset;
 
 // Set up the scale to be used on the x axis
 xScale = d3.scaleLinear()
-				.range([20, svg_width]);
+				.range([0, svg_width]);
         
 
 // Set up the scale to be used on the y axis
@@ -165,6 +165,7 @@ function generateVis(){
                                     return rScale(d.Population);
      
         })
+  
 		   	.style("fill", function (d) {
                                     return circleColor(d.Country)
                        })
@@ -294,8 +295,9 @@ function generateScatter () {
     
     xScale.domain([0, d3.max(dataset, function(d) { return +d.GDP;}) ])
 	yScale.domain([0, d3.max(dataset, function(d) { return +d.Global_Competitiveness_Index; })]);
-//
-//
+
+    
+  
 //	// Call the axes objects
   svg.select("#x-axis").call(xAxis);
  svg.select("#y-axis").call(yAxis);
@@ -331,6 +333,8 @@ function generateScatter () {
 									return yScale(d.Global_Competitiveness_Index);
 								})
 				.attr("r", 10)
+       .attr("stroke-width", 1)
+         .attr("stroke", "black")
      
         
 				.style("fill", function (d) {
@@ -369,7 +373,7 @@ function generateScatter () {
 }
             
 // Load the file data.csv and generate a visualisation based on it
-	d3.csv("./data/test.csv", function(error, data){
+	d3.csv("./data/china.csv", function(error, data){
 		
 		// handle any data loading errors
 		if(error){
@@ -397,7 +401,7 @@ function generateScatter () {
         var value = d3.select(this).property("value");
         
         alert(value);
-        generateScatter;
+   //     generateScatter;
       });
 
 

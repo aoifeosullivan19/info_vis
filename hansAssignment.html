@@ -108,6 +108,8 @@ var svg = d3.select("body")
 			
 country="China"
 display_year=2007;
+            
+            
 
 // define a function that filters data by year
 function yearFilter(value){
@@ -128,10 +130,13 @@ function generateVis(){
 	var filtered_dataset = dataset.filter(yearFilter);
  console.log(filtered_dataset);
 
+    
+    
 //	// Update the axis domains based on the loaded data
-	xScale.domain([0, d3.max(dataset, function(d) { return +d.GDP;}) ])
-	yScale.domain([0, d3.max(dataset, function(d) { return +d.Global_Competitiveness_Index; })]);
+	xScale.domain([0, d3.max(dataset, function(d) { return + parseInt(d.GDP);}) ])
+	yScale.domain([0, d3.max(dataset, function(d) { return + parseInt(d.Global_Competitiveness_Index); })]);
 
+    
 
 	// Call the axes objects
 	svg.select("#x-axis").call(xAxis);
@@ -373,7 +378,7 @@ function generateScatter () {
 }
             
 // Load the file data.csv and generate a visualisation based on it
-	d3.csv("./data/china.csv", function(error, data){
+	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
 		
 		// handle any data loading errors
 		if(error){
@@ -385,9 +390,21 @@ function generateScatter () {
 	// Assign  the data object loaded to the global dataset variable
 			dataset = data;
          generateScatter();
-      //      generateVis();
-           
+      //      
+      
             
+    // Set the domains of the x and y scales using the data
+			var max_close = d3.max(dataset, function(d) { return parseInt(d.Global_Competitiveness_Index);} );
+			var max_date = d3.max(dataset, function(d) { return parseInt(d.GDP);} );
+			var min_date = d3.min(dataset, function(d) { return parseInt(d.GDP);} );
+            console.log(max_date);
+            console.log(d3.min(data, function(d) { return d.GDP;} ));
+		
+			xScale.domain([min_date, max_date]);
+			yScale.domain([0, max_close]);
+            rScale.domain([0, d3.max(dataset, function(d) { return +d.Population;}) ])
+          
+          //  generateVis();
 
 	// A global variable for the interval listeneer so that it can be stopped elsewhere
 	var playInterval;	
@@ -478,11 +495,11 @@ d3.select(".play")
 });
 
 			// Set the domains of the x and y scales using the data
-			var max_close = d3.max(dataset, function(d) { return d.Global_Competitiveness_Index;} );
-			var max_date = d3.max(dataset, function(d) { return d.GDP;} );
-			var min_date = d3.min(dataset, function(d) { return d.GDP;} );
+			var max_close = d3.max(dataset, function(d) { return parseInt(d.Global_Competitiveness_Index);} );
+			var max_date = d3.max(dataset, function(d) { return parseInt(d.GDP);} );
+			var min_date = d3.min(dataset, function(d) { return parseInt(d.GDP);} );
 		
-			xScale.domain([min_date, max_date]);
+			xScale.domain([0, max_date]);
 			yScale.domain([0, max_close]);
             rScale.domain([0, d3.max(dataset, function(d) { return +d.Population;}) ])
             

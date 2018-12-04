@@ -291,23 +291,32 @@ function generateVis(){
    
 } 
      
-function generateVis1(){
+function generateVis1(countrySelect){
+//	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
+//		 data.forEach(function(d) {
+//        d.Year = d.Year;
+//        d.first_pillar_Institutions = +d.first_pillar_Institutions;
+//        d.second_pillar_Infrastructure = +d.second_pillar_Infrastructure;       //  <=== Add this line in!
+//    })
+//                      dataset = data;
+//                     });
 
+            
 
     
     	// Filter the data to only include the current year
-	var filtered_dataset = dataset.filter(yearFilter);
+	        	var filtered_dataset = dataset.filter(function(d){return d.Country==countrySelect;});
  
-    
-
-    
-    
+        
+//	  var columnNames = d3.keys(filtered_dataset[0]) //grab the key values from your first data row
+//                                     //these are the same as your column names
+//                  .slice(2);
+//   console.log(columnNames);
+//    
 //	// Update the axis domains based on the loaded data
-	xScale.domain([0, d3.max(dataset, function(d) { return + d.GDP;}) ])
-	yScale.domain([0, d3.max(dataset, function(d) { return + d.Global_Competitiveness_Index; })]);
+	xScale.domain([2007, d3.max(dataset, function(d) { return  d.Year;})]);
+	yScale.domain([0, 8]);
 
-    
-    
     
 
 	// Call the axes objects
@@ -316,119 +325,52 @@ function generateVis1(){
     
     	/******** PERFORM DATA JOIN ************/
 	  	// Join new data with old elements, if any.
-		var points = svg1.selectAll("circle")
-							.data(filtered_dataset);
 
+
+// define the line
+var valueline = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.first_pillar_Institutions); })
+        .curve(d3.curveMonotoneX);
+    
+    var valueline1 = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.second_pillar_Institutions); })
+        .curve(d3.curveMonotoneX);
+    
 
     
-   
-    
-		/******** HANDLE UPDATE SELECTION ************/
-	  	// Update the display of existing elelemnts to mathc new data
-	  	// Perform a data join and add points to the chart
-
- 
-        points
-        .transition()
-    .duration(300)
-//      .ease(d3.easeBack)
-            .attr("cx",function(d){
-									return xScale(d.GDP);
-								})
-    		.attr("cy", function(d){
-									return yScale(d.Global_Competitiveness_Index);
-								})
-            .attr("r", function(d){
-                                    return rScale(d.Population);
-     
-        })
   
-		   	.style("fill", function (d) {
-                                    return circleColor(d.Country)
-                       })
-//      .on("mouseover", function(d) {		
-//            d3.select(this)
-//              //  .transition()
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-//            })	
-    ;
-
-
-		/******** HANDLE ENTER SELECTION ************/
-	  	// Create new elements in the dataset
-	  	// Perform a data join and add points to the chart
-    
- 
-		points.enter()
-			.append("circle")
-                .transition()
-                .duration(2000)
-          .ease(d3.easeBounce)
-				.attr("cx", function(d){
-									return xScale(d.GDP);
-								})
-				.attr("cy", function(d){
-									return yScale(d.Global_Competitiveness_Index);
-								})
-				.attr("r", function(d){
-                                    return rScale(d.Population);
+    // Add the valueline path.
+  svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", "steelblue")
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+.attr("d", valueline);
+    svg.append("path")      // Add the valueline2 path.
+        .attr("class", "line")
+        .attr("d", valueline(filtered_dataset));
      
-        })
-				.style("fill", function (d) {
-                                    return circleColor(d.Country)
-                       })
-          .attr("stroke-width", 1)
-         .attr("stroke", "black")
-
-//                 .on("mouseover", function(d) {		
-//            div.transition()		
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div	.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-   //         })			// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 //		
-    ;
-
-
     
-    
-		/******** HANDLE EXIT SELECTION ************/
-		// Remove elements that not longer have a matching data eleement
-	//	points.exit()
-    
-        //    .remove();
-    	
-    points.    on("mouseover", function(d) {		
-            d3.select(this)
-                div.transition()
-                .duration(100)		
-                .style("opacity", .99);
-            div.html(d.Country)	
-      
-                .style("left", (d3.event.pageX) + "px")		
-                .style("top", (d3.event.pageY + 5) + "px")   ;})
-           .on("mouseout", function(d) {
-       div.transition()
-         .duration(500)
-         .style("opacity", 0);
-       
-       ;})
-    
-     points
-                    
-                    .style("opacity", 0.9);
-    ;
-   //  	https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73
-            	
-    
-	// Set the year label
-	d3.select("#year_header").text("Year: " + display_year)
    
+    
+    // 12. Appends a circle for each datapoint 
+//svg1.selectAll(".dot")
+//    .data(filtered_dataset)
+//  .enter().append("circle") // Uses the enter().append() method
+//    .attr("class", "dot") // Assign a class for styling
+//    .attr("cx", function(d) { return xScale(d.Year); })
+//    .attr("cy", function(d) { return yScale(d.first_pillar_Institutions); })
+//    .attr("r", 5);
+   
+
+
+		
 } 
             
 function generateVis2(){
@@ -692,15 +634,15 @@ function generateScatter (countrySelect) {
       
             
     // Set the domains of the x and y scales using the data
-			var max_close = d3.max(dataset, function(d) { return d.Global_Competitiveness_Index;} );
-			var max_date = d3.max(dataset, function(d) { return d.GDP;} );
-			var min_date = d3.min(dataset, function(d) { return d.GDP;} );
-          
-		
-			xScale.domain([min_date, max_date]);
-			yScale.domain([0, max_close]);
-            rScale.domain([0, d3.max(dataset, function(d) { return +d.Population;}) ])
-          
+//			var max_close = d3.max(dataset, function(d) { return d.Global_Competitiveness_Index;} );
+//			var max_date = d3.max(dataset, function(d) { return d.GDP;} );
+//			var min_date = d3.min(dataset, function(d) { return d.GDP;} );
+//          
+//		
+//			xScale.domain([min_date, max_date]);
+//			yScale.domain([0, max_close]);
+//            rScale.domain([0, d3.max(dataset, function(d) { return +d.Population;}) ])
+//          
             generateVis1();
 generateVis2();
 	// A global variable for the interval listeneer so that it can be stopped elsewhere
@@ -735,6 +677,7 @@ generateVis2();
            transparent();
                 remove();
          generateScatter(countrySelect);
+                generateVis1(countrySelect);
        
       });
             

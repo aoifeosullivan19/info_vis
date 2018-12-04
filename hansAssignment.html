@@ -38,26 +38,34 @@ background-color: #ffffe6 !important;
     border-radius: 8px;			
     pointer-events: none;			
 }
-        
+       
           
         /* http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 */
 	</style>
 </head>
+     
 <body>
 
 	<h1>Channelling Hans</h1>
     <h3>Mapping the World based on the World Economic Forum Global Competitiveness Report</h3>
     
-            
-            
-	
+    <div id="partA">  </div> 
+     <div class="slidecontainer">
+<button type="button" id="play">Play</button>
+	<button type="button" id="pause">Pause</button>
+  <input type="range" min="2007" max="2017" value="1" class="slider" id="sliderRange">
+    </div>
+    <div class="year">
+     <p>Year: <span id="year"></span></p>
+    </div> 
+	 <div id="partB">  </div> 
          
 
             
 		<script type="text/javascript" id = "demo_code">
 
 // Define margins
-var margin = {top: 40, right: 20, bottom: 55, left: 100};
+var margin = {top: 60, right: 20, bottom: 55, left: 100};
 
 //Width and height
 var outer_width = 700;
@@ -104,13 +112,29 @@ var div = d3.select("body").append("div")
             
 
 //Create SVG element as a group with the margins transform applied to it
-var svg = d3.select("body")
+var svg = d3.select("#partA")
+			.append("svg")
+			.attr("width", svg_width + margin.left + margin.right)
+			.attr("height", svg_height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            
+
+var svg1 = d3.select("#partB")
 			.append("svg")
 			.attr("width", svg_width + margin.left + margin.right)
 			.attr("height", svg_height + margin.top + margin.bottom)
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 			
+var svg2 = d3.select("body")
+			.append("svg")
+			.attr("width", svg_width + margin.left + margin.right)
+			.attr("height", svg_height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			
+            
 country="China"
 display_year=2007;
    var countrySelect;         
@@ -267,7 +291,285 @@ function generateVis(){
    
 } 
      
+function generateVis1(){
+
+
+    
+    	// Filter the data to only include the current year
+	var filtered_dataset = dataset.filter(yearFilter);
+ 
+    
+
+    
+    
+//	// Update the axis domains based on the loaded data
+	xScale.domain([0, d3.max(dataset, function(d) { return + d.GDP;}) ])
+	yScale.domain([0, d3.max(dataset, function(d) { return + d.Global_Competitiveness_Index; })]);
+
+    
+    
+    
+
+	// Call the axes objects
+	svg1.select("#x-axis").call(xAxis);
+	svg1.select("#y-axis").call(yAxis);
+    
+    	/******** PERFORM DATA JOIN ************/
+	  	// Join new data with old elements, if any.
+		var points = svg1.selectAll("circle")
+							.data(filtered_dataset);
+
+
+    
+   
+    
+		/******** HANDLE UPDATE SELECTION ************/
+	  	// Update the display of existing elelemnts to mathc new data
+	  	// Perform a data join and add points to the chart
+
+ 
+        points
+        .transition()
+    .duration(300)
+//      .ease(d3.easeBack)
+            .attr("cx",function(d){
+									return xScale(d.GDP);
+								})
+    		.attr("cy", function(d){
+									return yScale(d.Global_Competitiveness_Index);
+								})
+            .attr("r", function(d){
+                                    return rScale(d.Population);
+     
+        })
+  
+		   	.style("fill", function (d) {
+                                    return circleColor(d.Country)
+                       })
+//      .on("mouseover", function(d) {		
+//            d3.select(this)
+//              //  .transition()
+//                .duration(100)		
+//                .style("opacity", .99);		
+//            div.html(d.Country)	
+//                .style("left", (d3.event.pageX) + "px")		
+//                .style("top", (d3.event.pageY + 5) + "px");	
+//            })	
+    ;
+
+
+		/******** HANDLE ENTER SELECTION ************/
+	  	// Create new elements in the dataset
+	  	// Perform a data join and add points to the chart
+    
+ 
+		points.enter()
+			.append("circle")
+                .transition()
+                .duration(2000)
+          .ease(d3.easeBounce)
+				.attr("cx", function(d){
+									return xScale(d.GDP);
+								})
+				.attr("cy", function(d){
+									return yScale(d.Global_Competitiveness_Index);
+								})
+				.attr("r", function(d){
+                                    return rScale(d.Population);
+     
+        })
+				.style("fill", function (d) {
+                                    return circleColor(d.Country)
+                       })
+          .attr("stroke-width", 1)
+         .attr("stroke", "black")
+
+//                 .on("mouseover", function(d) {		
+//            div.transition()		
+//                .duration(100)		
+//                .style("opacity", .99);		
+//            div	.html(d.Country)	
+//                .style("left", (d3.event.pageX) + "px")		
+//                .style("top", (d3.event.pageY + 5) + "px");	
+   //         })			// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 //		
+    ;
+
+
+    
+    
+		/******** HANDLE EXIT SELECTION ************/
+		// Remove elements that not longer have a matching data eleement
+	//	points.exit()
+    
+        //    .remove();
+    	
+    points.    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html(d.Country)	
+      
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+       
+       ;})
+    
+     points
+                    
+                    .style("opacity", 0.9);
+    ;
+   //  	https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73
+            	
+    
+	// Set the year label
+	d3.select("#year_header").text("Year: " + display_year)
+   
+} 
             
+function generateVis2(){
+
+
+    
+    	// Filter the data to only include the current year
+	var filtered_dataset = dataset.filter(yearFilter);
+ 
+    
+
+    
+    
+//	// Update the axis domains based on the loaded data
+	xScale.domain([0, d3.max(dataset, function(d) { return + d.GDP;}) ])
+	yScale.domain([0, d3.max(dataset, function(d) { return + d.Global_Competitiveness_Index; })]);
+
+    
+    
+    
+
+	// Call the axes objects
+	svg2.select("#x-axis").call(xAxis);
+	svg2.select("#y-axis").call(yAxis);
+    
+    	/******** PERFORM DATA JOIN ************/
+	  	// Join new data with old elements, if any.
+		var points = svg2.selectAll("circle")
+							.data(filtered_dataset);
+
+
+    
+   
+    
+		/******** HANDLE UPDATE SELECTION ************/
+	  	// Update the display of existing elelemnts to mathc new data
+	  	// Perform a data join and add points to the chart
+
+ 
+        points
+        .transition()
+    .duration(300)
+//      .ease(d3.easeBack)
+            .attr("cx",function(d){
+									return xScale(d.GDP);
+								})
+    		.attr("cy", function(d){
+									return yScale(d.Global_Competitiveness_Index);
+								})
+            .attr("r", function(d){
+                                    return rScale(d.Population);
+     
+        })
+  
+		   	.style("fill", function (d) {
+                                    return circleColor(d.Country)
+                       })
+//      .on("mouseover", function(d) {		
+//            d3.select(this)
+//              //  .transition()
+//                .duration(100)		
+//                .style("opacity", .99);		
+//            div.html(d.Country)	
+//                .style("left", (d3.event.pageX) + "px")		
+//                .style("top", (d3.event.pageY + 5) + "px");	
+//            })	
+    ;
+
+
+		/******** HANDLE ENTER SELECTION ************/
+	  	// Create new elements in the dataset
+	  	// Perform a data join and add points to the chart
+    
+ 
+		points.enter()
+			.append("circle")
+                .transition()
+                .duration(2000)
+          .ease(d3.easeBounce)
+				.attr("cx", function(d){
+									return xScale(d.GDP);
+								})
+				.attr("cy", function(d){
+									return yScale(d.Global_Competitiveness_Index);
+								})
+				.attr("r", function(d){
+                                    return rScale(d.Population);
+     
+        })
+				.style("fill", function (d) {
+                                    return circleColor(d.Country)
+                       })
+          .attr("stroke-width", 1)
+         .attr("stroke", "black")
+
+//                 .on("mouseover", function(d) {		
+//            div.transition()		
+//                .duration(100)		
+//                .style("opacity", .99);		
+//            div	.html(d.Country)	
+//                .style("left", (d3.event.pageX) + "px")		
+//                .style("top", (d3.event.pageY + 5) + "px");	
+   //         })			// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 //		
+    ;
+
+
+    
+    
+		/******** HANDLE EXIT SELECTION ************/
+		// Remove elements that not longer have a matching data eleement
+	//	points.exit()
+    
+        //    .remove();
+    	
+    points.    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html(d.Country)	
+      
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+       
+       ;})
+    
+     points
+                    
+                    .style("opacity", 0.9);
+    ;
+   //  	https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73
+            	
+    
+	// Set the year label
+	d3.select("#year_header").text("Year: " + display_year)
+   
+} 
         
 function generateScatter (countrySelect) {
     
@@ -399,12 +701,12 @@ function generateScatter (countrySelect) {
 			yScale.domain([0, max_close]);
             rScale.domain([0, d3.max(dataset, function(d) { return +d.Population;}) ])
           
-          //  generateVis();
-
+            generateVis1();
+generateVis2();
 	// A global variable for the interval listeneer so that it can be stopped elsewhere
 	var playInterval;	
 	    
-  var select = d3.select("body")
+  var select = d3.select("#partA")
       .append("div")
       .append("select")
 
@@ -541,6 +843,70 @@ d3.select(".play")
 				      .attr("dy", ".71em")
 				      .style("text-anchor", "end")
 				      .text("Global Competitive Index");
+            	// Create the x-axis
+			svg1.append("g")
+				.attr("class", "axis")
+				.attr("id", "x-axis")
+				.attr("transform", "translate(0," + svg_height + ")")
+				.call(xAxis)
+            	.append("text")
+				      .attr("y", 50)
+                      .attr("x", 330)
+                    .style("font-size", "15px")
+                        .attr("font-family", "sans-serif")
+                      .attr("fill", "black") 
+				      .style("text-anchor", "end")
+				      .text("GDP");
+				
+			// Create the y axis
+			svg1.append("g")
+				.attr("class", "axis")
+				.attr("id", "y-axis")
+				.call(yAxis)
+            
+				.append("text")
+				      .attr("transform", "rotate(-90)")
+            
+            .attr("fill", "black") 
+            .style("font-size", "15px")
+				      .attr("y", -60)
+                        .attr("x", -130)
+				      .attr("dy", ".71em")
+				      .style("text-anchor", "end")
+				      .text("Global Competitive Index");
+            
+            
+             	// Create the x-axis
+			svg2.append("g")
+				.attr("class", "axis")
+				.attr("id", "x-axis")
+				.attr("transform", "translate(0," + svg_height + ")")
+				.call(xAxis)
+            	.append("text")
+				      .attr("y", 50)
+                      .attr("x", 330)
+                    .style("font-size", "15px")
+                        .attr("font-family", "sans-serif")
+                      .attr("fill", "black") 
+				      .style("text-anchor", "end")
+				      .text("GDP");
+				
+			// Create the y axis
+			svg2.append("g")
+				.attr("class", "axis")
+				.attr("id", "y-axis")
+				.call(yAxis)
+            
+				.append("text")
+				      .attr("transform", "rotate(-90)")
+            
+            .attr("fill", "black") 
+            .style("font-size", "15px")
+				      .attr("y", -60)
+                        .attr("x", -130)
+				      .attr("dy", ".71em")
+				      .style("text-anchor", "end")
+				      .text("Global Competitive Index");
             
      //       generateVis();
 
@@ -561,17 +927,12 @@ d3.select(".play")
 	});
 		</script>
     
-    <div class="slidecontainer">
-<button type="button" id="play">Play</button>
-	<button type="button" id="pause">Pause</button>
-  <input type="range" min="2007" max="2017" value="1" class="slider" id="sliderRange">
-    </div>
-    <div class="year">
-     <p>Year: <span id="year"></span></p>
-    </div>
+   
 		</div>
 
 	
 	</div>
+
+
 </body>	 
 </html>

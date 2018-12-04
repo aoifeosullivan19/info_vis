@@ -57,7 +57,7 @@ background-color: #ffffe6 !important;
 		<script type="text/javascript" id = "demo_code">
 
 // Define margins
-var margin = {top: 20, right: 20, bottom: 55, left: 100};
+var margin = {top: 40, right: 20, bottom: 55, left: 100};
 
 //Width and height
 var outer_width = 700;
@@ -139,9 +139,11 @@ function generateVis(){
     
     
 //	// Update the axis domains based on the loaded data
-	xScale.domain([0, d3.max(dataset, function(d) { return + parseInt(d.GDP);}) ])
-	yScale.domain([0, d3.max(dataset, function(d) { return + parseInt(d.Global_Competitiveness_Index); })]);
+	xScale.domain([0, d3.max(dataset, function(d) { return + d.GDP;}) ])
+	yScale.domain([0, d3.max(dataset, function(d) { return + d.Global_Competitiveness_Index; })]);
 
+    
+    
     
 
 	// Call the axes objects
@@ -388,9 +390,9 @@ function generateScatter (countrySelect) {
       
             
     // Set the domains of the x and y scales using the data
-			var max_close = d3.max(dataset, function(d) { return parseInt(d.Global_Competitiveness_Index);} );
-			var max_date = d3.max(dataset, function(d) { return parseInt(d.GDP);} );
-			var min_date = d3.min(dataset, function(d) { return parseInt(d.GDP);} );
+			var max_close = d3.max(dataset, function(d) { return d.Global_Competitiveness_Index;} );
+			var max_date = d3.max(dataset, function(d) { return d.GDP;} );
+			var min_date = d3.min(dataset, function(d) { return d.GDP;} );
           
 		
 			xScale.domain([min_date, max_date]);
@@ -498,7 +500,7 @@ d3.select(".play")
 });
 
 			// Set the domains of the x and y scales using the data
-			var max_close = d3.max(dataset, function(d) { return parseInt(d.Global_Competitiveness_Index);} );
+			var max_close = d3.max(dataset, function(d) { return d.Global_Competitiveness_Index;} );
 			var max_date = d3.max(dataset, function(d) { return parseInt(d.GDP);} );
 			var min_date = d3.min(dataset, function(d) { return parseInt(d.GDP);} );
 		

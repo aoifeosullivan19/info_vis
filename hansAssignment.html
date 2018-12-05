@@ -1053,13 +1053,8 @@ select1
        
       });
             
-      var columns=[]
-          d3.csv("./data/GCI_CompleteData4.csv", function(csv) {
-            csv.forEach(function(row) {
-                columns+=Object.keys(row);
-            });
-        });   console.log(columns);
-            
+
+       
 var select2 = d3.select("#partC")
       .append("div")
       .append("select")
@@ -1086,23 +1081,23 @@ select2
        
       });
             
-       
-var pillars=["first_pillar_Institutions", "second_pillar_Infrastructure", "third_pillar_Macroeconomic_environment", "fourth_pillar_Health_and_primary_education", "fifth_pillar_Higher_education_and_training", "sixth_pillar_Goods_market_efficiency", "seventh_pillar_Labor_market_efficiency", "eighth_pillar_Financial_market_development", "ninth_pillar_Technological_readiness", "tenth_pillar_Market_size", "eleventh_pillar_Business_sophistication_", "twelfth_pillar_Innovation"]
+   
+var pillars=new Array("first_pillar_Institutions", "second_pillar_Infrastructure", "third_pillar_Macroeconomic_environment", "fourth_pillar_Health_and_primary_education", "fifth_pillar_Higher_education_and_training", "sixth_pillar_Goods_market_efficiency", "seventh_pillar_Labor_market_efficiency", "eighth_pillar_Financial_market_development", "ninth_pillar_Technological_readiness", "tenth_pillar_Market_size", "eleventh_pillar_Business_sophistication_", "twelfth_pillar_Innovation");
 
 var select3 = d3.select("#partC")
       .append("div")
       .append("select")
 
+
+        
 select3.selectAll("option")
       .data(data)
       .enter()
         .append("option")
-        .attr("value",  function() {for (i=0; i<pillars.length; i++) {
-    return pillars[i];
-}})
+        .attr("value",  function(d) {return d.Year})
             
-        .text(pillars)
-             
+        .text(function(d){return d.Year})
+ 
             
              ;
             

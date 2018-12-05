@@ -12,9 +12,7 @@
        body {
 background-color: #ffffe6 !important;
 }
-
-        
-        
+   
 		.axis path,
 		.axis line {
 		    fill: none;
@@ -157,21 +155,16 @@ function countryFilter1(value){
 
 function generateVis(){
 
-
     
     	// Filter the data to only include the current year
 	var filtered_dataset = dataset.filter(yearFilter);
  
-    
-
     
     
 //	// Update the axis domains based on the loaded data
 	xScale.domain([0, d3.max(dataset, function(d) { return + d.GDP;}) ])
 	yScale.domain([0, d3.max(dataset, function(d) { return + d.Global_Competitiveness_Index; })]);
 
-    
-    
     
 
 	// Call the axes objects
@@ -185,8 +178,6 @@ function generateVis(){
 
 
     
-   
-    
 		/******** HANDLE UPDATE SELECTION ************/
 	  	// Update the display of existing elelemnts to mathc new data
 	  	// Perform a data join and add points to the chart
@@ -194,7 +185,7 @@ function generateVis(){
  
         points
         .transition()
-    .duration(300)
+    .duration(700)
 //      .ease(d3.easeBack)
             .attr("cx",function(d){
 									return xScale(d.GDP);
@@ -210,15 +201,6 @@ function generateVis(){
 		   	.style("fill", function (d) {
                                     return circleColor(d.Country)
                        })
-//      .on("mouseover", function(d) {		
-//            d3.select(this)
-//              //  .transition()
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-//            })	
     ;
 
 
@@ -230,8 +212,8 @@ function generateVis(){
 		points.enter()
 			.append("circle")
                 .transition()
-                .duration(2000)
-          .ease(d3.easeBounce)
+                .duration(100)
+      
 				.attr("cx", function(d){
 									return xScale(d.GDP);
 								})
@@ -246,20 +228,8 @@ function generateVis(){
                                     return circleColor(d.Country)
                        })
           .attr("stroke-width", 1)
-         .attr("stroke", "black")
-
-//                 .on("mouseover", function(d) {		
-//            div.transition()		
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div	.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-   //         })			// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 //		
+         .attr("stroke", "black")	
     ;
-
-
-    
     
 		/******** HANDLE EXIT SELECTION ************/
 		// Remove elements that not longer have a matching data eleement
@@ -278,7 +248,7 @@ function generateVis(){
                 .style("top", (d3.event.pageY + 5) + "px")   ;})
            .on("mouseout", function(d) {
        div.transition()
-         .duration(500)
+         .duration(700)
          .style("opacity", 0);
        
        ;})
@@ -296,35 +266,16 @@ function generateVis(){
 } 
      
 function generateVis1(countrySelect){
-    
-//    
-//	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
-//		 data.forEach(function(d) {
-//        d.Year = d.Year;
-//        d.first_pillar_Institutions = +d.first_pillar_Institutions;
-//        d.second_pillar_Infrastructure = +d.second_pillar_Infrastructure;   
-//             d.third_pillar_Macroeconomic_environment=+d.third_pillar_Macroeconomic_environment;//  <=== Add this line in!
-//    })
-//                      dataset = data;
-//                     });
-//
-//            console.log(dataset);
-
-    
+        
     	// Filter the data to only include the current year
 	        	var filtered_dataset = dataset.filter(function(d){return d.Country==countrySelect;});
      console.log(filtered_dataset);
         
-//	  var columnNames = d3.keys(filtered_dataset[0]) //grab the key values from your first data row
-//                                     //these are the same as your column names
-//                  .slice(2);
-//   console.log(columnNames);
-//    
+
 //	// Update the axis domains based on the loaded data
 	xScale.domain([2007, d3.max(dataset, function(d) { return  d.Year;})]);
 	yScale.domain([0, 8]);
 
-    
 
 	// Call the axes objects
 	svg1.select("#x-axis").call(xAxis);
@@ -335,7 +286,6 @@ function generateVis1(countrySelect){
 
 
 // define the line
-    
    
 var firstPillar = d3.line()
 
@@ -681,46 +631,14 @@ var pillars =[firstPillar, secondPillar, thirdPillar, fourthPillar, fifthPillar,
          .duration(500)
          .style("opacity", 0);
     ;})
-//    var paths=svg1.selectAll("path")
-//     paths.    on("mouseover", function(d) {		
-//            d3.select(this)
-//                div.transition()
-//                .duration(100)		
-//                .style("opacity", .99);
-//            div.html(pillars)	
-//      
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px")   ;})
-//           .on("mouseout", function(d) {
-//       div.transition()
-//         .duration(500)
-//         .style("opacity", 0);
-       
-       
-    
-   
-    
-    // 12. Appends a circle for each datapoint 
-//svg1.selectAll(".dot")
-//    .data(filtered_dataset)
-//  .enter().append("circle") // Uses the enter().append() method
-//    .attr("class", "dot") // Assign a class for styling
-//    .attr("cx", function(d) { return xScale(d.Year); })
-//    .attr("cy", function(d) { return yScale(d.first_pillar_Institutions); })
-//    .attr("r", 5);
-   
-
-
 		
 } 
             
 function generateVis2(countrySelect){
 
-
     	// Filter the data to only include the current year
 var filtered_dataset1 = dataset.filter(function(d){return d.Country==countrySelect;});
      console.log(filtered_dataset1);
-
         
 
 //	// Update the axis domains based on the loaded data
@@ -767,9 +685,7 @@ var firstPillar = d3.line()
            .on("mouseout", function(d) {
        div.transition()
          .duration(500)
-         .style("opacity", 0);;})
-    
-    
+         .style("opacity", 0);;})  
 } 
             
 function generateVis3(countrySelect){
@@ -778,10 +694,9 @@ function generateVis3(countrySelect){
     	// Filter the data to only include the current year
 var filtered_dataset1 = dataset.filter(function(d){return d.Country==countrySelect;});
      console.log(filtered_dataset1);
-
         
 
-//	// Update the axis domains based on the loaded data
+	// Update the axis domains based on the loaded data
 	xScale.domain([2007, d3.max(dataset, function(d) { return  d.Year;})]);
 	yScale.domain([0, 8]);
 
@@ -824,7 +739,7 @@ var firstPillar = d3.line()
                 .style("top", (d3.event.pageY + 5) + "px")   ;})
            .on("mouseout", function(d) {
        div.transition()
-         .duration(500)
+         .duration(700)
          .style("opacity", 0);;})
     
     
@@ -832,33 +747,22 @@ var firstPillar = d3.line()
         
 function generateScatter (countrySelect) {
     
-        	var filtered_dataset1 = dataset.filter(function(d){return d.Country==countrySelect;});
-
-    
-    
+var filtered_dataset1 = dataset.filter(function(d){return d.Country==countrySelect;});    
     
     xScale.domain([0, d3.max(dataset, function(d) { return +d.GDP;}) ])
 	yScale.domain([0, d3.max(dataset, function(d) { return +d.Global_Competitiveness_Index; })]);
 
     
   
-//	// Call the axes objects
+	// Call the axes objects
   svg.select("#x-axis").call(xAxis);
  svg.select("#y-axis").call(yAxis);
 //    	/******** PERFORM DATA JOIN ************/
-//	  	// Join new data with old elements, if any.
+	  	// Join new data with old elements, if any.
 		var dots = svg.selectAll(".dot")
 							.data(filtered_dataset1);
       
-//      .on("mouseover", function(d) {		
-//            d3.select(this)
-//              //  .transition()
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-//            })	
+
     ;
     
 
@@ -876,10 +780,9 @@ function generateScatter (countrySelect) {
 				.attr("cy", function(d){
 									return yScale(d.Global_Competitiveness_Index);
 								})
-				.attr("r", function(d){
-                                    return rScale(d.Population);
+				.attr("r", 20)
      
-        })
+        
        .attr("stroke-width", 1)
          .attr("stroke", "black")
      
@@ -888,14 +791,7 @@ function generateScatter (countrySelect) {
                                     return circleColor(d.Country)
                        });
 
-//                 .on("mouseover", function(d) {		
-//            div.transition()		
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div	.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-   //         })			// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 //		
+		// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 //		
     ;
 
 
@@ -938,7 +834,11 @@ function removeLines(){
  
  }
             
-            
+function removeLines1(){
+ l=svg2.selectAll("path").remove();
+     //.exit().remove();
+ 
+ }               
             
 // Load the file data.csv and generate a visualisation based on it
 	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
@@ -955,17 +855,6 @@ function removeLines(){
      //    generateScatter();
       //      
       
-            
-    // Set the domains of the x and y scales using the data
-//			var max_close = d3.max(dataset, function(d) { return d.Global_Competitiveness_Index;} );
-//			var max_date = d3.max(dataset, function(d) { return d.GDP;} );
-//			var min_date = d3.min(dataset, function(d) { return d.GDP;} );
-//          
-//		
-//			xScale.domain([min_date, max_date]);
-//			yScale.domain([0, max_close]);
-//            rScale.domain([0, d3.max(dataset, function(d) { return +d.Population;}) ])
-//          
             generateVis1();
 generateVis2();
 	// A global variable for the interval listeneer so that it can be stopped elsewhere
@@ -976,8 +865,6 @@ generateVis2();
       .append("select")
 
     
-
-
     select.selectAll("option")
       .data(data)
       .enter()
@@ -1056,7 +943,7 @@ select2
         var countryCompare = d3.select(this).property("value");
         
 
-         //    removeLines();
+             removeLines1();
            generateVis2(countryCompare);
       });
 
@@ -1082,21 +969,16 @@ select3
         var countryCompare = d3.select(this).property("value");
         
 
-         //    removeLines();
+            
            generateVis3(countryCompare)
 
       });
             
   
         
-
-
-       
-  
             
 //https://stackoverflow.com/questions/24588883/populate-dropdown-list-with-csv-file-d3
-	// Add an event listener to the play all button do that when it is clicked the visualisaiton iterates through the different years
-		
+
             d3.select("stop_button")
 		.on("click", function() {
                 		clearInterval(playInterval);
@@ -1108,7 +990,7 @@ var slider = document.getElementById("sliderRange");
 var output = document.getElementById("year");
 output.innerHTML = slider.value; // Display the default slider value
 
-// Update the current slider value (each time you drag the slider handle)
+// Update the current slider value
 slider.oninput = function() {
     output.innerHTML = this.value;
         display_year = output.innerHTML;
@@ -1132,7 +1014,7 @@ d3.select(".play")
 			// Update the visualsiation
 			generateVis();
 
-			}, 1000);
+			}, 700);
 		});	
             
             d3.select("#play").on("click", function() {
@@ -1147,7 +1029,7 @@ d3.select(".play")
                     generateVis();
                      output.innerHTML = yearUpdate;
                       
-    }, 600);
+    }, 700);
                 });
             //https://jsfiddle.net/bfbun6cc/60/
 
@@ -1262,19 +1144,8 @@ d3.select(".play")
 				      .style("text-anchor", "end")
 				      .text("Global Competitive Index");
             
-     //       generateVis();
-
-				
-        	// Generate the visualisation
-//			setInterval(function() {
-//			display_year = display_year + 1;
-//			if(display_year > 2017){
-//				display_year = 2007;
-//			}
-//		  	generateVis();
-//		}, 2000);	
+    
 	}
- 
 
 	
 		

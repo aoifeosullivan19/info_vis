@@ -139,7 +139,7 @@ var svg2 = d3.select("#partC")
 country="China"
 display_year=2007;
    var countrySelect;         
-            
+    var countryCompare;   
 
 // define a function that filters data by year
 function yearFilter(value){
@@ -150,7 +150,10 @@ function yearFilter(value){
 function countryFilter(value){
 	return (value.Country == countrySelect)
 }
-            
+function countryFilter1(value){
+	return (value.Country == countryCompare)
+}
+         
 
 function generateVis(){
 
@@ -294,18 +297,18 @@ function generateVis(){
      
 function generateVis1(countrySelect){
     
-    
-	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
-		 data.forEach(function(d) {
-        d.Year = d.Year;
-        d.first_pillar_Institutions = +d.first_pillar_Institutions;
-        d.second_pillar_Infrastructure = +d.second_pillar_Infrastructure;   
-             d.third_pillar_Macroeconomic_environment=+d.third_pillar_Macroeconomic_environment;//  <=== Add this line in!
-    })
-                      dataset = data;
-                     });
-
-            console.log(dataset);
+//    
+//	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
+//		 data.forEach(function(d) {
+//        d.Year = d.Year;
+//        d.first_pillar_Institutions = +d.first_pillar_Institutions;
+//        d.second_pillar_Infrastructure = +d.second_pillar_Infrastructure;   
+//             d.third_pillar_Macroeconomic_environment=+d.third_pillar_Macroeconomic_environment;//  <=== Add this line in!
+//    })
+//                      dataset = data;
+//                     });
+//
+//            console.log(dataset);
 
     
     	// Filter the data to only include the current year
@@ -711,144 +714,120 @@ var pillars =[firstPillar, secondPillar, thirdPillar, fourthPillar, fifthPillar,
 		
 } 
             
-function generateVis2(){
+function generateVis2(countrySelect){
 
 
-    
     	// Filter the data to only include the current year
-	var filtered_dataset = dataset.filter(yearFilter);
- 
-    
+var filtered_dataset1 = dataset.filter(function(d){return d.Country==countrySelect;});
+     console.log(filtered_dataset1);
 
-    
-    
+        
+
 //	// Update the axis domains based on the loaded data
-	xScale.domain([0, d3.max(dataset, function(d) { return + d.GDP;}) ])
-	yScale.domain([0, d3.max(dataset, function(d) { return + d.Global_Competitiveness_Index; })]);
+	xScale.domain([2007, d3.max(dataset, function(d) { return  d.Year;})]);
+	yScale.domain([0, 8]);
 
     
-    
-    
-
 	// Call the axes objects
 	svg2.select("#x-axis").call(xAxis);
 	svg2.select("#y-axis").call(yAxis);
     
     	/******** PERFORM DATA JOIN ************/
 	  	// Join new data with old elements, if any.
-		var points = svg2.selectAll("circle")
-							.data(filtered_dataset);
 
 
-    
-   
-    
-		/******** HANDLE UPDATE SELECTION ************/
-	  	// Update the display of existing elelemnts to mathc new data
-	  	// Perform a data join and add points to the chart
+// define the line
+var firstPillar = d3.line()
 
- 
-        points
-        .transition()
-    .duration(300)
-//      .ease(d3.easeBack)
-            .attr("cx",function(d){
-									return xScale(d.GDP);
-								})
-    		.attr("cy", function(d){
-									return yScale(d.Global_Competitiveness_Index);
-								})
-            .attr("r", function(d){
-                                    return rScale(d.Population);
-     
-        })
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.first_pillar_Institutions); })
+        .curve(d3.curveMonotoneX);
   
-		   	.style("fill", function (d) {
-                                    return circleColor(d.Country)
-                       })
-//      .on("mouseover", function(d) {		
-//            d3.select(this)
-//              //  .transition()
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-//            })	
-    ;
-
-
-		/******** HANDLE ENTER SELECTION ************/
-	  	// Create new elements in the dataset
-	  	// Perform a data join and add points to the chart
-    
- 
-		points.enter()
-			.append("circle")
-                .transition()
-                .duration(2000)
-          .ease(d3.easeBounce)
-				.attr("cx", function(d){
-									return xScale(d.GDP);
-								})
-				.attr("cy", function(d){
-									return yScale(d.Global_Competitiveness_Index);
-								})
-				.attr("r", function(d){
-                                    return rScale(d.Population);
-     
-        })
-				.style("fill", function (d) {
-                                    return circleColor(d.Country)
-                       })
-          .attr("stroke-width", 1)
-         .attr("stroke", "black")
-
-//                 .on("mouseover", function(d) {		
-//            div.transition()		
-//                .duration(100)		
-//                .style("opacity", .99);		
-//            div	.html(d.Country)	
-//                .style("left", (d3.event.pageX) + "px")		
-//                .style("top", (d3.event.pageY + 5) + "px");	
-   //         })			// http://bl.ocks.org/d3noob/a22c42db65eb00d4e369 //		
-    ;
-
-
+    		var points = svg.selectAll("line")
+							.data(filtered_dataset1);
     
     
-		/******** HANDLE EXIT SELECTION ************/
-		// Remove elements that not longer have a matching data eleement
-	//	points.exit()
-    
-        //    .remove();
-    	
+     // Add the valueline path.
+  svg2.append("path")
+      .data([filtered_dataset1])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[10])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", firstPillar);
     points.    on("mouseover", function(d) {		
             d3.select(this)
                 div.transition()
                 .duration(100)		
                 .style("opacity", .99);
-            div.html(d.Country)	
-      
-                .style("left", (d3.event.pageX) + "px")		
+           div.html( d.Country)	
+                    .style("left", (d3.event.pageX) + "px")		
                 .style("top", (d3.event.pageY + 5) + "px")   ;})
            .on("mouseout", function(d) {
        div.transition()
          .duration(500)
-         .style("opacity", 0);
-       
-       ;})
+         .style("opacity", 0);;})
     
-     points
-                    
-                    .style("opacity", 0.9);
-    ;
-   //  	https://bl.ocks.org/d3noob/257c360b3650b9f0a52dd8257d7a2d73
-            	
     
-	// Set the year label
-	d3.select("#year_header").text("Year: " + display_year)
-   
+} 
+            
+function generateVis3(countrySelect){
+
+
+    	// Filter the data to only include the current year
+var filtered_dataset1 = dataset.filter(function(d){return d.Country==countrySelect;});
+     console.log(filtered_dataset1);
+
+        
+
+//	// Update the axis domains based on the loaded data
+	xScale.domain([2007, d3.max(dataset, function(d) { return  d.Year;})]);
+	yScale.domain([0, 8]);
+
+    
+	// Call the axes objects
+	svg2.select("#x-axis").call(xAxis);
+	svg2.select("#y-axis").call(yAxis);
+    
+    	/******** PERFORM DATA JOIN ************/
+	  	// Join new data with old elements, if any.
+
+
+// define the line
+var firstPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.first_pillar_Institutions); })
+        .curve(d3.curveMonotoneX);
+  
+    		var points = svg.selectAll("line")
+							.data(filtered_dataset1);
+    
+    
+     // Add the valueline path.
+  svg2.append("path")
+      .data([filtered_dataset1])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[0])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", firstPillar);
+    points.    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+           div.html( d.Country)	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
 } 
         
 function generateScatter (countrySelect) {
@@ -1054,7 +1033,8 @@ select1
       });
             
 
-       
+var country1;  
+            
 var select2 = d3.select("#partC")
       .append("div")
       .append("select")
@@ -1063,53 +1043,56 @@ select2.selectAll("option")
       .data(data)
       .enter()
         .append("option")
-        .attr("value", function (d) { return Object.keys(d); })
+        .attr("value", function (d) { return d.value; })
             
         .text(function (d) { 
-                           return(d[1])   })
+                           return(d.Country)   })
              
             
              ;
             
 select2
       .on("change", function(d) {
-        var countrySelect = d3.select(this).property("value");
+        var countryCompare = d3.select(this).property("value");
         
 
-//             removeLines();
-//                generateVis1(countrySelect);
-       
+         //    removeLines();
+           generateVis2(countryCompare);
       });
-            
-   
-var pillars=new Array("first_pillar_Institutions", "second_pillar_Infrastructure", "third_pillar_Macroeconomic_environment", "fourth_pillar_Health_and_primary_education", "fifth_pillar_Higher_education_and_training", "sixth_pillar_Goods_market_efficiency", "seventh_pillar_Labor_market_efficiency", "eighth_pillar_Financial_market_development", "ninth_pillar_Technological_readiness", "tenth_pillar_Market_size", "eleventh_pillar_Business_sophistication_", "twelfth_pillar_Innovation");
+
 
 var select3 = d3.select("#partC")
       .append("div")
       .append("select")
 
-
-        
 select3.selectAll("option")
       .data(data)
       .enter()
         .append("option")
-        .attr("value",  function(d) {return d.Year})
+        .attr("value", function (d) { return d.value; })
             
-        .text(function(d){return d.Year})
- 
+        .text(function (d) { 
+                           return(d.Country)   })
+             
             
              ;
             
 select3
       .on("change", function(d) {
-        var countrySelect = d3.select(this).property("value");
+        var countryCompare = d3.select(this).property("value");
         
 
-//             removeLines();
-//                generateVis1(countrySelect);
-       
+         //    removeLines();
+           generateVis3(countryCompare)
+
       });
+            
+  
+        
+
+
+       
+  
             
 //https://stackoverflow.com/questions/24588883/populate-dropdown-list-with-csv-file-d3
 	// Add an event listener to the play all button do that when it is clicked the visualisaiton iterates through the different years

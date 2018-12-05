@@ -60,7 +60,7 @@ background-color: #ffffe6 !important;
     </div> 
 	 <div id="partB">  </div> 
          
-
+<div id="partC">  </div> 
             
 		<script type="text/javascript" id = "demo_code">
 
@@ -94,7 +94,8 @@ rScale=d3.scaleSqrt()
             
 var circleColor=d3.scaleOrdinal(d3.schemeCategory20);
 
-			
+var colorScheme=d3.schemeCategory20;
+			console.log(colorScheme);
 // Create an x-axis connected to the x scale
 var xAxis = d3.axisBottom()
 			  	.scale(xScale)
@@ -127,7 +128,7 @@ var svg1 = d3.select("#partB")
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 			
-var svg2 = d3.select("body")
+var svg2 = d3.select("#partC")
 			.append("svg")
 			.attr("width", svg_width + margin.left + margin.right)
 			.attr("height", svg_height + margin.top + margin.bottom)
@@ -292,21 +293,24 @@ function generateVis(){
 } 
      
 function generateVis1(countrySelect){
-//	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
-//		 data.forEach(function(d) {
-//        d.Year = d.Year;
-//        d.first_pillar_Institutions = +d.first_pillar_Institutions;
-//        d.second_pillar_Infrastructure = +d.second_pillar_Infrastructure;       //  <=== Add this line in!
-//    })
-//                      dataset = data;
-//                     });
+    
+    
+	d3.csv("./data/GCI_CompleteData4.csv", function(error, data){
+		 data.forEach(function(d) {
+        d.Year = d.Year;
+        d.first_pillar_Institutions = +d.first_pillar_Institutions;
+        d.second_pillar_Infrastructure = +d.second_pillar_Infrastructure;   
+             d.third_pillar_Macroeconomic_environment=+d.third_pillar_Macroeconomic_environment;//  <=== Add this line in!
+    })
+                      dataset = data;
+                     });
 
-            
+            console.log(dataset);
 
     
     	// Filter the data to only include the current year
 	        	var filtered_dataset = dataset.filter(function(d){return d.Country==countrySelect;});
- 
+     console.log(filtered_dataset);
         
 //	  var columnNames = d3.keys(filtered_dataset[0]) //grab the key values from your first data row
 //                                     //these are the same as your column names
@@ -328,34 +332,368 @@ function generateVis1(countrySelect){
 
 
 // define the line
-var valueline = d3.line()
+    
+   
+var firstPillar = d3.line()
 
     .x(function(d) { return xScale(d.Year); })
     .y(function(d) { return yScale(d.first_pillar_Institutions); })
         .curve(d3.curveMonotoneX);
     
-    var valueline1 = d3.line()
+    var secondPillar= d3.line()
 
     .x(function(d) { return xScale(d.Year); })
-    .y(function(d) { return yScale(d.second_pillar_Institutions); })
+    .y(function(d) { return yScale(d.second_pillar_Infrastructure); })
         .curve(d3.curveMonotoneX);
     
+     var thirdPillar = d3.line()
 
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.third_pillar_Macroeconomic_environment); })
+        .curve(d3.curveMonotoneX);
+    
+     var fourthPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.fourth_pillar_Health_and_primary_education); })
+        .curve(d3.curveMonotoneX);
+    
+     var fifthPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.fifth_pillar_Higher_education_and_training); })
+        .curve(d3.curveMonotoneX);
+    
+     var sixthPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.sixth_pillar_Goods_market_efficiency); })
+        .curve(d3.curveMonotoneX);
+    
+     var seventhPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.seventh_pillar_Labor_market_efficiency); })
+        .curve(d3.curveMonotoneX);
+    
+     var eighthPillar= d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.eighth_pillar_Financial_market_development); })
+        .curve(d3.curveMonotoneX);
+    
+     var ninthPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.ninth_pillar_Technological_readiness); })
+        .curve(d3.curveMonotoneX);
+        
+     var tenthPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.tenth_pillar_Market_size); })
+        .curve(d3.curveMonotoneX);
+        
+     var eleventhPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.eleventh_pillar_Business_sophistication_); })
+        .curve(d3.curveMonotoneX);
+        
+     var twelfthPillar = d3.line()
+
+    .x(function(d) { return xScale(d.Year); })
+    .y(function(d) { return yScale(d.twelfth_pillar_Innovation); })
+        .curve(d3.curveMonotoneX);
+    
+var pillars =[firstPillar, secondPillar, thirdPillar, fourthPillar, fifthPillar, sixthPillar, seventhPillar, eighthPillar, ninthPillar, tenthPillar, eleventhPillar, twelfthPillar]
     
   
     // Add the valueline path.
   svg1.append("path")
       .data([filtered_dataset])
     .attr("fill", "none")
-.attr("stroke", "steelblue")
+.attr("stroke", colorScheme[0])
 .attr("stroke-linejoin", "round")
 .attr("stroke-linecap", "round")
 .attr("stroke-width", 1.5)
-.attr("d", valueline);
-    svg.append("path")      // Add the valueline2 path.
-        .attr("class", "line")
-        .attr("d", valueline(filtered_dataset));
-     
+    .attr("d", firstPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("first_pillar_Institutions")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke",colorScheme[1])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", secondPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("second_pillar_Infrastructure")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+ //   .attr("d", valueline);
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[3])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", thirdPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("third_pillar_Macroeconomic_environment")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[4])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", fourthPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("fourth_pillar_Health_and_primary_education")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[6])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", fifthPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("fifth_pillar_Higher_education_and_training")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[7])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", sixthPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("sixth_pillar_Goods_market_efficiency")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[8])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", seventhPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("seventh_pillar_Labor_market_efficiency")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[10])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", eighthPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("eighth_pillar_Financial_market_development")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[11])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", ninthPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("ninth_pillar_Technological_readiness")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[13])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", tenthPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("tenth_pillar_Market_size")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+    ;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[14])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", eleventhPillar)
+        .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("eleventh_pillar_Business_sophistication")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+    
+    ;})
+    
+    
+      svg1.append("path")
+      .data([filtered_dataset])
+    .attr("fill", "none")
+.attr("stroke", colorScheme[16])
+.attr("stroke-linejoin", "round")
+.attr("stroke-linecap", "round")
+.attr("stroke-width", 1.5)
+    .attr("d", twelfthPillar)
+    .    on("mouseover", function(d) {		
+            d3.select(this)
+                div.transition()
+                .duration(100)		
+                .style("opacity", .99);
+            div.html("twelfth_pillar_Innovation")	
+                    .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY + 5) + "px")   ;})
+           .on("mouseout", function(d) {
+       div.transition()
+         .duration(500)
+         .style("opacity", 0);
+    ;})
+//    var paths=svg1.selectAll("path")
+//     paths.    on("mouseover", function(d) {		
+//            d3.select(this)
+//                div.transition()
+//                .duration(100)		
+//                .style("opacity", .99);
+//            div.html(pillars)	
+//      
+//                .style("left", (d3.event.pageX) + "px")		
+//                .style("top", (d3.event.pageY + 5) + "px")   ;})
+//           .on("mouseout", function(d) {
+//       div.transition()
+//         .duration(500)
+//         .style("opacity", 0);
+       
+       
     
    
     
@@ -615,6 +953,12 @@ function generateScatter (countrySelect) {
  
  }
             
+function removeLines(){
+ l=svg1.selectAll("path").remove();
+     //.exit().remove();
+ 
+ }
+            
             
             
 // Load the file data.csv and generate a visualisation based on it
@@ -677,11 +1021,100 @@ generateVis2();
            transparent();
                 remove();
          generateScatter(countrySelect);
-                generateVis1(countrySelect);
+             
        
       });
             
        
+            
+var select1 = d3.select("#partB")
+      .append("div")
+      .append("select")
+
+select1.selectAll("option")
+      .data(data)
+      .enter()
+        .append("option")
+        .attr("value", function (d) { return d.value; })
+            
+        .text(function (d) { 
+                           return(d.Country)   })
+             
+            
+             ;
+            
+select1
+      .on("change", function(d) {
+        var countrySelect = d3.select(this).property("value");
+        
+
+             removeLines();
+                generateVis1(countrySelect);
+       
+      });
+            
+      var columns=[]
+          d3.csv("./data/GCI_CompleteData4.csv", function(csv) {
+            csv.forEach(function(row) {
+                columns+=Object.keys(row);
+            });
+        });   console.log(columns);
+            
+var select2 = d3.select("#partC")
+      .append("div")
+      .append("select")
+
+select2.selectAll("option")
+      .data(data)
+      .enter()
+        .append("option")
+        .attr("value", function (d) { return Object.keys(d); })
+            
+        .text(function (d) { 
+                           return(d[1])   })
+             
+            
+             ;
+            
+select2
+      .on("change", function(d) {
+        var countrySelect = d3.select(this).property("value");
+        
+
+//             removeLines();
+//                generateVis1(countrySelect);
+       
+      });
+            
+       
+var pillars=["first_pillar_Institutions", "second_pillar_Infrastructure", "third_pillar_Macroeconomic_environment", "fourth_pillar_Health_and_primary_education", "fifth_pillar_Higher_education_and_training", "sixth_pillar_Goods_market_efficiency", "seventh_pillar_Labor_market_efficiency", "eighth_pillar_Financial_market_development", "ninth_pillar_Technological_readiness", "tenth_pillar_Market_size", "eleventh_pillar_Business_sophistication_", "twelfth_pillar_Innovation"]
+
+var select3 = d3.select("#partC")
+      .append("div")
+      .append("select")
+
+select3.selectAll("option")
+      .data(data)
+      .enter()
+        .append("option")
+        .attr("value",  function() {for (i=0; i<pillars.length; i++) {
+    return pillars[i];
+}})
+            
+        .text(pillars)
+             
+            
+             ;
+            
+select3
+      .on("change", function(d) {
+        var countrySelect = d3.select(this).property("value");
+        
+
+//             removeLines();
+//                generateVis1(countrySelect);
+       
+      });
             
 //https://stackoverflow.com/questions/24588883/populate-dropdown-list-with-csv-file-d3
 	// Add an event listener to the play all button do that when it is clicked the visualisaiton iterates through the different years
